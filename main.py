@@ -1,4 +1,6 @@
-# based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
+# Heavily edited version of skeleton-tictactoe.py (original included in project)
+# original based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
+
 
 #Notes
 #If program generates an illegal move, then it will automatically lose the game
@@ -7,6 +9,7 @@
 # e1 and e2 heuristics
 import time
 
+Alphabet = ['A','B','C','D','E','F','G','H','I','J',]
 
 class Game:
     MINIMAX = 0
@@ -14,27 +17,36 @@ class Game:
     HUMAN = 2
     AI = 3
 
-    def __init__(self, recommend=True):
-        self.initialize_game()
-        self.recommend = recommend
 
-    def initialize_game(self):
-        self.current_state = [['.', '.', '.'],
-                              ['.', '.', '.'],
-                              ['.', '.', '.']]
+
+
+    def __init__(self, recommend=True):
+     #   self.initialize_game()
+         self.recommend = recommend
+
+    def initialize_game(self,n,b,s):
+        #should this be elsewhere? Should we send it?
+        self.recommend = True
+        self.n = n
+        self.b = b
+        self.s = s
+
+        self.current_state = (self.generate_board(n,b))
+
         # Player X always plays first
         self.player_turn = 'X'
 
+    def generate_board(self,n,b):
+        # Generate board based off n
+       return [['.' for j in range(n)] for i in range(n)]
+
+
     def draw_board(self):
-        print()
-        for y in range(0, 3):
-            for x in range(0, 3):
-                print(F'{self.current_state[x][y]}', end="")
-            print()
-        print()
+        for row in self.current_state:
+            print(row)
 
     def is_valid(self, px, py):
-        if px < 0 or px > 2 or py < 0 or py > 2:
+        if px < 0 or px > (self.n-1) or py < 0 or py > (self.n-1):
             return False
         elif self.current_state[px][py] != '.':
             return False
@@ -226,37 +238,66 @@ class Game:
             self.current_state[x][y] = self.player_turn
             self.switch_player()
 
-def generate_board(n):
-    # Generate board based off n
-    board = []
-    row = []
-    for x in range(n):
-        row.append('.')
-    for y in range(n):
-        board.append(row)
+    # Temporary Edited version of play with limited functionality
+    def play2(self, algo=None, player_x=None, player_o=None):
+        if algo == None:
+            algo = self.ALPHABETA
+        if player_x == None:
+            player_x = self.HUMAN
+        if player_o == None:
+            player_o = self.HUMAN
+        while True:
+            self.draw_board()
 
-    #Print statement test, Remove later
-    for z in board:
-        print(z)
+            #Temp, remove later
+            (x, y) = 0,0
 
+            #start = time.time()
+            #end = time.time()
+            if (self.player_turn == 'X' and player_x == self.HUMAN) or (
+                    self.player_turn == 'O' and player_o == self.HUMAN):
+                (x, y) = self.input_move()
+
+            self.current_state[x][y] = self.player_turn
+            self.switch_player()
+def some_setup():
+    data = []
+    n = int(input('enter the the board size n (for board n x n): '))
+    while True:
+        if n in range(3, 11):
+            break
+        n = int(input('Invalid board size (range 3-10) - re-enter size n: '))
+
+    #s = int(input('enter the winning line-up size: '))
+    #b = int(input('enter the amount of blocks on the board: '))
+    # loop here b times each time asking for a UNIQUE bloc position
+
+    # Don't know if these are console inputs are just variables we keep
+    #d1 = int(input('enter the maximum depth for player 1: '))
+    #d2 = int(input('enter the maximum depth for player 2: '))
+    #a = int(input('enter:  minimax (FALSE) or alphabeta (TRUE)'))
+
+    data.append(n)
+    return data
 
 def main():
     g = Game(recommend=True)
-    n = int(input('enter the the board size n (for board n x n): '))
-    s = int(input('enter the winning line-up size: '))
-    b = int(input('enter the amount of blocks on the board: '))
-    #loop here b times each time asking for a UNIQUE bloc position
+    data = some_setup()
+    g.initialize_game(data[0], 1, 1)
+    g.draw_board()
+    #g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
+    #g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
-    #Don't know if these are console inputs are just variables we keep
-    d1 = int(input('enter the maximum depth for player 1: '))
-    d2 = int(input('enter the maximum depth for player 2: '))
-    a = int(input('enter:  minimax (FALSE) or alphabeta (TRUE)'))
-
-    g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
-    g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
+    # CHANGE TO g.play once functionality of program is further along
+    g.play2(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
 
 
 if __name__ == "__main__":
-    #main()
-    generate_board(5)
+    main()
+    #generate_board(5)
 
+# Disabled for now
+# MinMax
+# Alpha
+# is_end
+# check_end
