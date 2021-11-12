@@ -31,19 +31,21 @@ class Game:
         self.b = b
         self.s = s
 
-        self.current_state = (self.generate_board(n,b))
+        self.current_state = self.generate_board()
 
         # Player X always plays first
         self.player_turn = 'X'
 
-    def generate_board(self,n,b):
+    def generate_board(self):
         # Generate board based off n
-       return [['.' for j in range(n)] for i in range(n)]
+
+        return  [['.' for i in range(self.n)] for i in range(self.n)]
 
 
     def draw_board(self):
         for row in self.current_state:
             print(row)
+        print("")
 
     def is_valid(self, px, py):
         if px < 0 or px > (self.n-1) or py < 0 or py > (self.n-1):
@@ -53,13 +55,94 @@ class Game:
         else:
             return True
 
+
+
     def is_end(self):
+        # Keeps track of how many consecutive matches we have
+        count = 0
+        # Current player token found
+        current_tok = '0'
+        # Next token
+        next_tok = '1'
+
         # Vertical win
-        for i in range(0, 3):
+        for col in range(0, self.n):
+            for row in range(0, self.n):
+                # Get current token and next token if not empty or a bloc
+                if self.current_state[row][col] not in {'.', '*'}:
+                    current_tok = self.current_state[row][col]
+                    if row != self.n - 1 and self.current_state[row+1][col] not in {'.', '*'}:
+                        next_tok = self.current_state[row+1][col]
+
+                        if current_tok == next_tok:
+                            count += 1
+                        if count == self.s - 1:
+                            return self.current_state[row][col]
+
+                    else:
+                        count = 0
+                else:
+                    count = 0
+
+                # Horizontal win
+                for row in range(0, self.n):
+                    for col in range(0, self.n):
+                        # Get current token and next token if not empty or a bloc
+                        if self.current_state[row][col] not in {'.', '*'}:
+                            current_tok = self.current_state[row][col]
+                            if row != self.n - 1 and self.current_state[row][col+1] not in {'.', '*'}:
+                                next_tok = self.current_state[row][col+1]
+
+                                if current_tok == next_tok:
+                                    count += 1
+                                if count == self.s - 1:
+                                    return self.current_state[row][col]
+
+                            else:
+                                count = 0
+                        else:
+                            count = 0
+
+        return None
+
+
+
+    def is_end2(self):
+
+        #Keeps track of how many consecutive matches we have
+        count = 0
+        #Current player token found
+        current = '0'
+        #Next token
+        next = '1'
+
+        # Vertical win
+        for i in range(0, self.n):
             if (self.current_state[0][i] != '.' and
                     self.current_state[0][i] == self.current_state[1][i] and
                     self.current_state[1][i] == self.current_state[2][i]):
                 return self.current_state[0][i]
+
+        for col in range(0, self.n-1):
+            for row in range(0, self.n-1):
+
+                #Get current token and next token if not empty or a bloc
+                if self.current_state[col][row] not in {'.','*'}:
+                    current = self.current_state[col][row]
+                    if row != self.n-1 and self.current_state[row][col+1] not in {'.','*'}:
+                        next = self.current_state[row][col+1]
+                    else:
+                        count = 0
+                else:
+                    count = 0
+
+                if current == next:
+                    count += 1
+                if count == self.s:
+                    return self.current_state[row][col]
+
+
+
         # Horizontal win
         for i in range(0, 3):
             if (self.current_state[i] == ['X', 'X', 'X']):
@@ -95,7 +178,7 @@ class Game:
                 print('The winner is O!')
             elif self.result == '.':
                 print("It's a tie!")
-            self.initialize_game()
+            #self.initialize_game()
         return self.result
 
     def input_move(self):
@@ -248,6 +331,8 @@ class Game:
             player_o = self.HUMAN
         while True:
             self.draw_board()
+            if self.check_end():
+                return
 
             #Temp, remove later
             (x, y) = 0,0
@@ -283,8 +368,8 @@ def some_setup():
 def main():
     g = Game(recommend=True)
     data = some_setup()
-    g.initialize_game(data[0], 1, 1)
-    g.draw_board()
+    g.initialize_game(data[0], 1, 3)
+    #g.draw_board()
     #g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
     #g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
