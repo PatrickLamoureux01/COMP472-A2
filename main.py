@@ -14,9 +14,6 @@ class Game:
     HUMAN = 2
     AI = 3
 
-
-
-
     def __init__(self, recommend=True):
      #   self.initialize_game()
          self.recommend = recommend
@@ -415,6 +412,18 @@ def some_setup():
         if n in range(3, 11):
             break
         n = int(input('Invalid board size (range 3-10) - re-enter size n: '))
+    blocks = []
+    b = int(input('enter the amount of blocks on the board: '))
+    for x in range(b):
+        (bx, by) = (input('enter the coordinate(A..)(0..) of block {}: '.format(x)))
+        while True:
+            if (bx, by) in blocks:
+                print("Already in")
+            else:
+                break
+                #(bx, by) = (input('enter the coordinate(A..)(0..) of block {}: '.format(x)))
+        blocks.append(bx,by)
+        # loop here b times each time asking for a UNIQUE bloc position
 
     # Player X
     d1 = int(input('enter the the depth for player 1 (d1): '))
@@ -426,8 +435,7 @@ def some_setup():
 
 
     #s = int(input('enter the winning line-up size: '))
-    #b = int(input('enter the amount of blocks on the board: '))
-    # loop here b times each time asking for a UNIQUE bloc position
+
 
     # Don't know if these are console inputs are just variables we keep
     #d1 = int(input('enter the maximum depth for player 1: '))
