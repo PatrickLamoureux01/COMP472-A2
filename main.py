@@ -43,7 +43,15 @@ class Game:
 
 
     def draw_board(self):
-        for row in self.current_state:
+        print("  ", end="")
+        # Print Alphabetical Headings
+        for col in range(0,self.n):
+            print("  "+Alphabet[col]+"  ", end="")
+        print("")
+
+        # Print Board
+        for num,row in enumerate(self.current_state):
+            print(str(num)+" ", end="")
             print(row)
         print("")
 
@@ -55,7 +63,22 @@ class Game:
         else:
             return True
 
+    def convert_move(self, move):
+        px = -1
+        py = -1
 
+        if len(move) != 2:
+            return px,py
+
+        for index in range(0,self.n):
+            if move[0] == Alphabet[index]:
+                px = index
+                break
+
+        if str.isnumeric(move[1]) and int(move[1]) in range(0,self.n):
+            py = int(move[1])
+
+        return px,py
 
     def is_end(self):
         # Keeps track of how many consecutive matches we have
@@ -148,68 +171,6 @@ class Game:
         return '.'
 
 
-
-    def is_end2(self):
-
-        #Keeps track of how many consecutive matches we have
-        count = 0
-        #Current player token found
-        current = '0'
-        #Next token
-        next = '1'
-
-        # Vertical win
-        for i in range(0, self.n):
-            if (self.current_state[0][i] != '.' and
-                    self.current_state[0][i] == self.current_state[1][i] and
-                    self.current_state[1][i] == self.current_state[2][i]):
-                return self.current_state[0][i]
-
-        for col in range(0, self.n-1):
-            for row in range(0, self.n-1):
-
-                #Get current token and next token if not empty or a bloc
-                if self.current_state[col][row] not in {'.','*'}:
-                    current = self.current_state[col][row]
-                    if row != self.n-1 and self.current_state[row][col+1] not in {'.','*'}:
-                        next = self.current_state[row][col+1]
-                    else:
-                        count = 0
-                else:
-                    count = 0
-
-                if current == next:
-                    count += 1
-                if count == self.s:
-                    return self.current_state[row][col]
-
-
-
-        # Horizontal win
-        for i in range(0, 3):
-            if (self.current_state[i] == ['X', 'X', 'X']):
-                return 'X'
-            elif (self.current_state[i] == ['O', 'O', 'O']):
-                return 'O'
-        # Main diagonal win
-        if (self.current_state[0][0] != '.' and
-                self.current_state[0][0] == self.current_state[1][1] and
-                self.current_state[0][0] == self.current_state[2][2]):
-            return self.current_state[0][0]
-        # Second diagonal win
-        if (self.current_state[0][2] != '.' and
-                self.current_state[0][2] == self.current_state[1][1] and
-                self.current_state[0][2] == self.current_state[2][0]):
-            return self.current_state[0][2]
-        # Is whole board full?
-        for i in range(0, 3):
-            for j in range(0, 3):
-                # There's an empty field, we continue the game
-                if (self.current_state[i][j] == '.'):
-                    return None
-        # It's a tie!
-        return '.'
-
     def check_end(self):
         self.result = self.is_end()
         # Printing the appropriate message if the game has ended
@@ -226,8 +187,13 @@ class Game:
     def input_move(self):
         while True:
             print(F'Player {self.player_turn}, enter your move:')
-            px = int(input('enter the x coordinate: '))
-            py = int(input('enter the y coordinate: '))
+            #px = int(input('enter the x coordinate: '))
+            #py = int(input('enter the y coordinate: '))
+
+            move = (input('enter the coordinates(A..)(0..): '))
+            (py,px) = self.convert_move(move)
+
+
             if self.is_valid(px, py):
                 return (px, py)
             else:
