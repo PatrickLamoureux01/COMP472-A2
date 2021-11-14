@@ -2,11 +2,8 @@
 # original based on code from https://stackabuse.com/minimax-and-alpha-beta-pruning-in-python
 
 
-#Notes
-#If program generates an illegal move, then it will automatically lose the game
-#You do not need to check the validity of these input values; you can assume that they will be valid.
-# 2 output files
-# e1 and e2 heuristics
+# If you are reading this and are trying to understand this code
+# I pity you
 import time
 
 Alphabet = ['A','B','C','D','E','F','G','H','I','J',]
@@ -24,12 +21,18 @@ class Game:
      #   self.initialize_game()
          self.recommend = recommend
 
-    def initialize_game(self,n,b,s):
+    def initialize_game(self,n,b,s,d1,d2):
         #should this be elsewhere? Should we send it?
         self.recommend = True
         self.n = n
         self.b = b
         self.s = s
+
+        self.d1 = d1
+        self.d2 = d2
+        self.depth = d1
+
+        self.h = "e1"
 
         self.current_state = self.generate_board()
 
@@ -41,6 +44,8 @@ class Game:
 
         return  [['.' for i in range(self.n)] for i in range(self.n)]
 
+    def set_cur_depth(self,depth):
+        self.depth = depth
 
     def draw_board(self):
         print("  ", end="")
@@ -216,6 +221,48 @@ class Game:
             self.player_turn = 'X'
         return self.player_turn
 
+    def heuristic(self):
+        # Note: B = X and W = 0
+        x = 0
+        y = 0
+        #return 1,x,y
+        b_count = 0
+        w_count = 0
+        b_score = 0
+        w_score = 0
+
+
+        if self.h == "e1":
+            # Vertical win : this is E1 lol
+            for col in range(0, self.n):
+                for row in range(0, self.n):
+                    if self.current_state[row][col] not in {'.', '*'}:
+                        current_tok = self.current_state[row][col]
+                        if current_tok == 'X':
+                            b_score += 10
+                        else:
+                            w_score += 10
+                        if row != self.n - 1 and self.current_state[row + 1][col] not in {'.', '*'}:
+                            next_tok = self.current_state[row + 1][col]
+                            if current_tok == next_tok:
+                                if current_tok == 'X':
+                                    b_score += 100
+                                else:
+                                    w_score += 100
+
+            if self.player_turn == 'X':
+                return -b_score, 1, 1  # Note the negative sign
+            if self.player_turn == 'O':
+                return w_score, 1, 1
+        else:
+            print("e2 should be here, yep")
+
+
+        print("Very concerning")
+        return 1,0,0
+
+
+
     def minimax(self, max=False):
         # Minimizing for 'X' and maximizing for 'O'
         # Possible values are:
@@ -255,7 +302,8 @@ class Game:
                     self.current_state[i][j] = '.'
         return (value, x, y)
 
-    def alphabeta(self, alpha=-2, beta=2, max=False):
+    def alphabeta(self, alpha=-2, beta=2,depth=2, max=False):
+        #print(depth)
         # Minimizing for 'X' and maximizing for 'O'
         # Possible values are:
         # -1 - win for 'X'
@@ -274,36 +322,50 @@ class Game:
             return (1, x, y)
         elif result == '.':
             return (0, x, y)
-        for i in range(0, 3):
-            for j in range(0, 3):
-                if self.current_state[i][j] == '.':
-                    if max:
-                        self.current_state[i][j] = 'O'
-                        (v, _, _) = self.alphabeta(alpha, beta, max=False)
-                        if v > value:
-                            value = v
-                            x = i
-                            y = j
-                    else:
-                        self.current_state[i][j] = 'X'
-                        (v, _, _) = self.alphabeta(alpha, beta, max=True)
-                        if v < value:
-                            value = v
-                            x = i
-                            y = j
-                    self.current_state[i][j] = '.'
-                    if max:
-                        if value >= beta:
-                            return (value, x, y)
-                        if value > alpha:
-                            alpha = value
-                    else:
-                        if value <= alpha:
-                            return (value, x, y)
-                        if value < beta:
-                            beta = value
+
+        if depth > 0:
+            depth = depth - 1
+
+            for i in range(0, self.n):
+                for j in range(0, self.n):
+                    if self.current_state[i][j] == '.':
+                        if max:
+                            self.current_state[i][j] = 'O'
+                            (v, _, _) = self.alphabeta(alpha, beta,depth, max=False)
+                            if v > value:
+                                value = v
+                                x = i
+                                y = j
+                        else:
+                            self.current_state[i][j] = 'X'
+                            (v, _, _) = self.alphabeta(alpha, beta,depth, max=True)
+                            if v < value:
+                                value = v
+                                x = i
+                                y = j
+                        self.current_state[i][j] = '.'
+                        if max:
+                            if value >= beta:
+                                return (value, x, y)
+                            if value > alpha:
+                                alpha = value
+                        else:
+                            if value <= alpha:
+                                return (value, x, y)
+                            if value < beta:
+                                beta = value
+        else:
+            #print("Getting Heuristic of: ")
+            #self.draw_board()
+            return self.heuristic()
+
+        #print(value)
+        #print(x)
+        #print(y)
+        #self.depth = self.depth + 1
         return (value, x, y)
 
+    # Temporary Edited version of play with limited functionality
     def play(self, algo=None, player_x=None, player_o=None):
         if algo == None:
             algo = self.ALPHABETA
@@ -316,42 +378,6 @@ class Game:
             if self.check_end():
                 return
             start = time.time()
-            if algo == self.MINIMAX:
-                if self.player_turn == 'X':
-                    (_, x, y) = self.minimax(max=False)
-                else:
-                    (_, x, y) = self.minimax(max=True)
-            else:  # algo == self.ALPHABETA
-                if self.player_turn == 'X':
-                    (m, x, y) = self.alphabeta(max=False)
-                else:
-                    (m, x, y) = self.alphabeta(max=True)
-            end = time.time()
-            if (self.player_turn == 'X' and player_x == self.HUMAN) or (
-                    self.player_turn == 'O' and player_o == self.HUMAN):
-                if self.recommend:
-                    print(F'Evaluation time: {round(end - start, 7)}s')
-                    print(F'Recommended move: x = {x}, y = {y}')
-                (x, y) = self.input_move()
-            if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
-                print(F'Evaluation time: {round(end - start, 7)}s')
-                print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
-            self.current_state[x][y] = self.player_turn
-            self.switch_player()
-
-    # Temporary Edited version of play with limited functionality
-    def play2(self, algo=None, player_x=None, player_o=None):
-        if algo == None:
-            algo = self.ALPHABETA
-        if player_x == None:
-            player_x = self.HUMAN
-        if player_o == None:
-            player_o = self.HUMAN
-        while True:
-            self.draw_board()
-            if self.check_end():
-                return
-            start = time.time()
 
             if algo == self.MINIMAX:
                 if self.player_turn == 'X':
@@ -360,11 +386,11 @@ class Game:
                     (_, x, y) = self.minimax(max=True)
             else:  # algo == self.ALPHABETA
                 if self.player_turn == 'X':
-                    print("DEBUG:this is minimax still")
-                    (m, x, y) = self.minimax(max=False)
+                    #self.depth = self.d1
+                    (m, x, y) = self.alphabeta(-2,2,self.d1,max=False)
                 else:
-                    print("DEBUG:this is minimax still")
-                    (m, x, y) = self.minimax(max=True)
+                    #self.depth = self.d2
+                    (m, x, y) = self.alphabeta(-2,2,self.d2,max=True)
 
             end = time.time()
 
@@ -380,6 +406,8 @@ class Game:
 
             self.current_state[x][y] = self.player_turn
             self.switch_player()
+
+
 def some_setup():
     data = []
     n = int(input('enter the the board size n (for board n x n): '))
@@ -387,6 +415,15 @@ def some_setup():
         if n in range(3, 11):
             break
         n = int(input('Invalid board size (range 3-10) - re-enter size n: '))
+
+    # Player X
+    d1 = int(input('enter the the depth for player 1 (d1): '))
+
+    # Player Y
+    d2 = int(input('enter the the depth for player 2 (d2): '))
+
+
+
 
     #s = int(input('enter the winning line-up size: '))
     #b = int(input('enter the amount of blocks on the board: '))
@@ -398,22 +435,20 @@ def some_setup():
     #a = int(input('enter:  minimax (FALSE) or alphabeta (TRUE)'))
 
     data.append(n)
+    data.append(d1)
+    data.append(d2)
     return data
 
 def main():
     g = Game(recommend=True)
     data = some_setup()
-    g.initialize_game(data[0], 1, 3)
-    #g.draw_board()
+    g.initialize_game(data[0], 1, 3,data[1],data[2])
     #g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
     #g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
     # CHANGE TO g.play once functionality of program is further along
-    g.play2(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
+    g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
 
 
 if __name__ == "__main__":
     main()
-
-# Disabled for now
-# Alpha
