@@ -72,13 +72,19 @@ class Game:
 
         for index in range(0,self.n):
             if move[0] == Alphabet[index]:
-                px = index
+                py = index
                 break
 
         if str.isnumeric(move[1]) and int(move[1]) in range(0,self.n):
-            py = int(move[1])
+            px = int(move[1])
 
         return px,py
+
+    def transform_move(self,x,y):
+        p1 = Alphabet[y]
+        p2 = str(x)
+        coord = p1 + p2
+        return coord
 
     def is_end(self):
         # Keeps track of how many consecutive matches we have
@@ -100,6 +106,7 @@ class Game:
                         if current_tok == next_tok:
                             count += 1
                         if count == self.s - 1:
+                            #self.draw_board()
                             return self.current_state[row][col]
 
                     else:
@@ -119,6 +126,7 @@ class Game:
                         if current_tok == next_tok:
                             count += 1
                         if count == self.s - 1:
+                            #self.draw_board()
                             return self.current_state[row][col]
 
                     else:
@@ -136,6 +144,7 @@ class Game:
                     if next_tok == current_tok:
                         count += 1
                     if count == self.s - 1:
+                        #self.draw_board()
                         return self.current_state[index][index]
                 else:
                     count = 0
@@ -153,6 +162,7 @@ class Game:
                     if next_tok == current_tok:
                         count += 1
                     if count == self.s - 1:
+                        #self.draw_board()
                         return self.current_state[reversed_x][index]
                 else:
                     count = 0
@@ -162,7 +172,7 @@ class Game:
         # Is board full?
         for row in range(0, self.n):
             for col in range(0, self.n):
-                if(self.current_state[row][col] == '.'):
+                if self.current_state[row][col] == '.':
                     return None
 
 
@@ -191,7 +201,7 @@ class Game:
             #py = int(input('enter the y coordinate: '))
 
             move = (input('enter the coordinates(A..)(0..): '))
-            (py,px) = self.convert_move(move)
+            (px,py) = self.convert_move(move)
 
 
             if self.is_valid(px, py):
@@ -225,8 +235,8 @@ class Game:
             return (1, x, y)
         elif result == '.':
             return (0, x, y)
-        for i in range(0, 3):
-            for j in range(0, 3):
+        for i in range(0, self.n):
+            for j in range(0, self.n):
                 if self.current_state[i][j] == '.':
                     if max:
                         self.current_state[i][j] = 'O'
@@ -341,15 +351,32 @@ class Game:
             self.draw_board()
             if self.check_end():
                 return
+            start = time.time()
 
-            #Temp, remove later
-            (x, y) = 0,0
+            if algo == self.MINIMAX:
+                if self.player_turn == 'X':
+                    (_, x, y) = self.minimax(max=False)
+                else:
+                    (_, x, y) = self.minimax(max=True)
+            else:  # algo == self.ALPHABETA
+                if self.player_turn == 'X':
+                    print("DEBUG:this is minimax still")
+                    (m, x, y) = self.minimax(max=False)
+                else:
+                    print("DEBUG:this is minimax still")
+                    (m, x, y) = self.minimax(max=True)
 
-            #start = time.time()
-            #end = time.time()
+            end = time.time()
+
             if (self.player_turn == 'X' and player_x == self.HUMAN) or (
                     self.player_turn == 'O' and player_o == self.HUMAN):
+                print(F'Evaluation time: {round(end - start, 7)}s')
+                print(F'Recommended move: '+ self.transform_move(x,y))
                 (x, y) = self.input_move()
+
+            if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
+                print(F'Evaluation time: {round(end - start, 7)}s')
+                print(F'Player {self.player_turn} under AI control plays: ' + self.transform_move(x,y))
 
             self.current_state[x][y] = self.player_turn
             self.switch_player()
@@ -382,15 +409,11 @@ def main():
     #g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
     # CHANGE TO g.play once functionality of program is further along
-    g.play2(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
+    g.play2(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
 
 if __name__ == "__main__":
     main()
-    #generate_board(5)
 
 # Disabled for now
-# MinMax
 # Alpha
-# is_end
-# check_end
