@@ -84,26 +84,68 @@ class Game:
                 else:
                     count = 0
 
-                # Horizontal win
-                for row in range(0, self.n):
-                    for col in range(0, self.n):
-                        # Get current token and next token if not empty or a bloc
-                        if self.current_state[row][col] not in {'.', '*'}:
-                            current_tok = self.current_state[row][col]
-                            if row != self.n - 1 and self.current_state[row][col+1] not in {'.', '*'}:
-                                next_tok = self.current_state[row][col+1]
+        # Horizontal win
+        for row in range(0, self.n):
+            for col in range(0, self.n):
+                # Get current token and next token if not empty or a bloc
+                if self.current_state[row][col] not in {'.', '*'}:
+                    current_tok = self.current_state[row][col]
+                    if col != self.n - 1 and self.current_state[row][col + 1] not in {'.', '*'}:
+                        next_tok = self.current_state[row][col + 1]
 
-                                if current_tok == next_tok:
-                                    count += 1
-                                if count == self.s - 1:
-                                    return self.current_state[row][col]
+                        if current_tok == next_tok:
+                            count += 1
+                        if count == self.s - 1:
+                            return self.current_state[row][col]
 
-                            else:
-                                count = 0
-                        else:
-                            count = 0
+                    else:
+                        count = 0
+                else:
+                    count = 0
 
-        return None
+        # Main diagonal win
+        for index in range(0, self.n):
+            if self.current_state[index][index] not in {'.', '*'}:
+                current_tok = self.current_state[index][index]
+                if index != self.n - 1 and self.current_state[index+1][index + 1] not in {'.', '*'}:
+                    next_tok = self.current_state[index+1][index + 1]
+
+                    if next_tok == current_tok:
+                        count += 1
+                    if count == self.s - 1:
+                        return self.current_state[index][index]
+                else:
+                    count = 0
+            else:
+                count = 0
+
+        # Second diagonal win
+        for index in range(0, self.n):
+            reversed_x = (self.n-1)-index
+            if self.current_state[reversed_x][index] not in {'.', '*'}:
+                current_tok = self.current_state[reversed_x][index]
+                if index != self.n - 1 and self.current_state[reversed_x - 1][index + 1] not in {'.', '*'}:
+                    next_tok = self.current_state[reversed_x - 1][index + 1]
+
+                    if next_tok == current_tok:
+                        count += 1
+                    if count == self.s - 1:
+                        return self.current_state[reversed_x][index]
+                else:
+                    count = 0
+            else:
+                count = 0
+
+        # Is board full?
+        for row in range(0, self.n):
+            for col in range(0, self.n):
+                if(self.current_state[row][col] == '.'):
+                    return None
+
+
+
+        # Returns '.' means it's a tie
+        return '.'
 
 
 
