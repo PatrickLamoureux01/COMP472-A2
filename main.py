@@ -407,56 +407,60 @@ class Game:
 
 def some_setup():
     data = []
-    n = int(input('enter the the board size n (for board n x n): '))
+    n = int(input('Enter the the board size n (for board n x n): '))
     while True:
         if n in range(3, 11):
             break
         n = int(input('Invalid board size (range 3-10) - re-enter size n: '))
     blocks = []
-    b = int(input('enter the amount of blocks on the board: '))
+    b = int(input('Enter the amount of blocks on the board: '))
     for x in range(b):
-        (bx, by) = (input('enter the coordinate(A..)(0..) of block {}: '.format(x)))
-        while True:
-            if (bx, by) in blocks:
-                print("Already in")
-            else:
-                break
-                #(bx, by) = (input('enter the coordinate(A..)(0..) of block {}: '.format(x)))
-        blocks.append(bx,by)
-        # loop here b times each time asking for a UNIQUE bloc position
+        [bx, by] = (input('Enter the coordinate(A..)(0..) of block {}: '.format(x+1)))
+        blocks.append([bx, by])
 
     # Player X
-    d1 = int(input('enter the the depth for player 1 (d1): '))
+    d1 = int(input('Enter the the depth for player 1 (d1): '))
 
     # Player Y
-    d2 = int(input('enter the the depth for player 2 (d2): '))
+    d2 = int(input('Enter the the depth for player 2 (d2): '))
 
-
-
-
-    #s = int(input('enter the winning line-up size: '))
-
-
-    # Don't know if these are console inputs are just variables we keep
-    #d1 = int(input('enter the maximum depth for player 1: '))
-    #d2 = int(input('enter the maximum depth for player 2: '))
-    #a = int(input('enter:  minimax (FALSE) or alphabeta (TRUE)'))
+    s = int(input('Enter the winning line-up size: '))
+    a = int(input('Enter:  minimax (FALSE) or alphabeta (TRUE)'))
+    type = int(input('Enter: 1 for H-H, 2 for H-AI, 3 for AI-H, 4 for AI-AI'))
 
     data.append(n)
+    data.append(blocks)
+    data.append(s)
     data.append(d1)
     data.append(d2)
+    data.append(a)
+    data.append(type)
     return data
 
 def main():
+
     g = Game(recommend=True)
     data = some_setup()
-    g.initialize_game(data[0], 1, 3,data[1],data[2])
-    #g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
-    #g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
+    g.initialize_game(data[0], data[1], data[2], data[3], data[4])
 
-    # CHANGE TO g.play once functionality of program is further along
-    g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
-
+    if data[5]:
+        if data[6] == 1:
+            g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
+        elif data[6] == 2:
+            g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.AI)
+        elif data[6] == 3:
+            g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
+        else:
+            g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
+    else:
+        if data[6] == 1:
+            g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
+        elif data[6] == 2:
+            g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.AI)
+        elif data[6] == 3:
+            g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
+        else:
+            g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
 
 if __name__ == "__main__":
     main()
