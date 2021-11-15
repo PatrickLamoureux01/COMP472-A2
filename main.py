@@ -37,16 +37,14 @@ class Game:
         self.player_turn = 'X'
 
     def generate_board(self,blocks):
-        # Generate board based off n
+        # Generate board based off n and b
         board = []
         board = [['.' for i in range(self.n)] for i in range(self.n)]
-        #print(blocks)
         for elem in blocks:
-            #print(elem[0])
-            #print(elem[1])
-            board[[elem[0]][elem[1]]] = '#'
-        print(board)
-        #return [['.' for i in range(self.n)] for i in range(self.n)]
+            x_cord = Alphabet.index(elem[0])
+            y_cord = int(elem[1]) - 1
+            board[x_cord][y_cord] = '#'
+        return board
 
     def set_cur_depth(self,depth):
         self.depth = depth
