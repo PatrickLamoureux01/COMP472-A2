@@ -6,6 +6,7 @@
 # I pity you
 import time
 
+
 Alphabet = ['A','B','C','D','E','F','G','H','I','J',]
 
 class Game:
@@ -257,9 +258,81 @@ class Game:
             if self.player_turn == 'O':
                 return w_score, 1, 1
         else:
-            print("e2 should be here, yep")
-
-
+            val = 0
+            xCount = 0
+            oCount = 0
+            for col in range(0, self.n):
+                for elem in self.current_state[col]:
+                    if elem == "X":
+                        xCount += 1
+                    elif elem == "O":
+                        oCount += 1
+                if xCount == 3:
+                    val += 1000
+                elif oCount == 3:
+                    val -= 1000
+                elif xCount == 2:
+                    val += 100
+                elif oCount == 2:
+                    val -= 100
+                elif xCount == 1:
+                    val += 10
+                elif oCount == 1:
+                    val -= 10
+            for row in range(0, self.n):
+                for elem in self.current_state[row]:
+                    if elem == "X":
+                        xCount += 1
+                    elif elem == "O":
+                        oCount += 1
+                if xCount == 3:
+                    val += 1000
+                elif oCount == 3:
+                    val -= 1000
+                elif xCount == 2:
+                    val += 100
+                elif oCount == 2:
+                    val -= 100
+                elif xCount == 1:
+                    val += 10
+                elif oCount == 1:
+                    val -= 10
+            diag_front = [ self.current_state[i][i] for i in range(len(self.current_state)) ]
+            for x in diag_front:
+                if elem == "X":
+                    xCount += 1
+                elif elem == "O":
+                    oCount += 1
+            if xCount == 3:
+                val += 1000
+            elif oCount == 3:
+                val -= 1000
+            elif xCount == 2:
+                val += 100
+            elif oCount == 2:
+                val -= 100
+            elif xCount == 1:
+                val += 10
+            elif oCount == 1:
+                val -= 10
+            diag_back = [ row[-i-1] for i,row in enumerate(self.current_state) ]
+            for y in diag_back:
+                if elem == "X":
+                    xCount += 1
+                elif elem == "O":
+                    oCount += 1
+            if xCount == 3:
+                val += 1000
+            elif oCount == 3:
+                val -= 1000
+            elif xCount == 2:
+                val += 100
+            elif oCount == 2:
+                val -= 100
+            elif xCount == 1:
+                val += 10
+            elif oCount == 1:
+                val -= 10
         print("Very concerning")
         return 1,0,0
 
@@ -423,13 +496,16 @@ def some_setup():
         [bx, by] = (input('Enter the coordinate(A..)(0..) of block {}: '.format(x+1)))
         blocks.append([bx, by])
 
+    s = int(input('Enter the winning line-up size: '))
+
     # Player X
     d1 = int(input('Enter the the depth for player 1 (d1): '))
 
     # Player Y
     d2 = int(input('Enter the the depth for player 2 (d2): '))
 
-    s = int(input('Enter the winning line-up size: '))
+    t = int(input('Enter the the max amount of time to make a move: '))
+
     a = int(input('Enter:  minimax (0) or alphabeta (1): '))
     type = int(input('Enter 1 for H-H, 2 for H-AI, 3 for AI-H, 4 for AI-AI: '))
 
@@ -438,6 +514,7 @@ def some_setup():
     data.append(s)
     data.append(d1)
     data.append(d2)
+    data.append(t)
     data.append(a)
     data.append(type)
     return data
@@ -448,21 +525,21 @@ def main():
     data = some_setup()
     g.initialize_game(data[0], data[1], data[2], data[3], data[4])
 
-    if data[5] == 1:
-        if data[6] == 1:
+    if data[6] == 1:
+        if data[7] == 1:
             g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
-        elif data[6] == 2:
+        elif data[7] == 2:
             g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.AI)
-        elif data[6] == 3:
+        elif data[7] == 3:
             g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
         else:
             g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
     else:
-        if data[6] == 1:
+        if data[7] == 1:
             g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
-        elif data[6] == 2:
+        elif data[7] == 2:
             g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.AI)
-        elif data[6] == 3:
+        elif data[7] == 3:
             g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
         else:
             g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
