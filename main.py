@@ -5,6 +5,28 @@
 # If you are reading this and are trying to understand this code
 # I pity you
 import time
+import sys
+
+file = "C:\\Users\\Pub\\Desktop\\Game_Output\\output.txt"
+
+
+# https://stackoverflow.com/questions/14906764/how-to-redirect-stdout-to-both-file-and-console-with-scripting
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open(file, "w")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        # this flush method is needed for python 3 compatibility.
+        # this handles the flush command by doing nothing.
+        # you might want to specify some extra behavior here.
+        pass
+
+
 
 
 Alphabet = ['A','B','C','D','E','F','G','H','I','J',]
@@ -30,7 +52,8 @@ class Game:
         self.d2 = d2
         self.depth = d1
 
-        self.h = "e1"
+        self.h_evaluations = 0
+        self.h = "e2"
 
         self.current_state = self.generate_board(self.b)
 
@@ -44,7 +67,7 @@ class Game:
         for elem in blocks:
             col = Alphabet.index(elem[0])
             row = int(elem[1])
-            board[row][col] = '#'
+            board[row][col] = '*'
         return board
 
     def set_cur_depth(self,depth):
@@ -233,10 +256,10 @@ class Game:
         w_count = 0
         b_score = 0
         w_score = 0
-
+        self.h_evaluations += 1
 
         if self.h == "e1":
-            # Vertical win : this is E1 lol
+            # Vertical win : this is E1
             for col in range(0, self.n):
                 for row in range(0, self.n):
                     if self.current_state[row][col] not in {'.', '*'}:
@@ -333,6 +356,9 @@ class Game:
                 val += 10
             elif oCount == 1:
                 val -= 10
+            return val,1,1
+
+
         print("Very concerning")
         return 1,0,0
 
@@ -454,6 +480,8 @@ class Game:
                 return
             start = time.time()
 
+            self.h_evaluations = 0
+
             if algo == self.MINIMAX:
                 if self.player_turn == 'X':
                     (_, x, y) = self.minimax(max=False)
@@ -471,12 +499,14 @@ class Game:
 
             if (self.player_turn == 'X' and player_x == self.HUMAN) or (
                     self.player_turn == 'O' and player_o == self.HUMAN):
-                print(F'Evaluation time: {round(end - start, 7)}s')
+                print(F'i Evaluation time: {round(end - start, 7)}s')
+                print(F'ii Heuristic evaluations: '+str(self.h_evaluations))
                 print(F'Recommended move: '+ self.transform_move(x,y))
                 (x, y) = self.input_move()
 
             if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
-                print(F'Evaluation time: {round(end - start, 7)}s')
+                print(F'i Evaluation time: {round(end - start, 7)}s')
+                print(F'ii Heuristic evaluations: ' + str(self.h_evaluations))
                 print(F'Player {self.player_turn} under AI control plays: ' + self.transform_move(x,y))
 
             self.current_state[x][y] = self.player_turn
@@ -534,6 +564,15 @@ def main():
     data = some_setup()
     g.initialize_game(data[0], data[1], data[2], data[3], data[4])
 
+    #Print output to file and to stdout
+    sys.stdout = Logger()
+    print("n: "+str(data[0]))
+    print("b: "+str(data[1]))
+    print("s: "+str(data[2]))
+    print("d1: "+str(data[3]))
+    print("d2: "+str(data[4]))
+
+
     if data[6] == 1:
         if data[7] == 1:
             g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
@@ -552,6 +591,7 @@ def main():
             g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
         else:
             g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
+
 
 if __name__ == "__main__":
     main()
