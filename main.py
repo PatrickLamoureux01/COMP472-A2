@@ -41,9 +41,9 @@ class Game:
         board = []
         board = [['.' for i in range(self.n)] for i in range(self.n)]
         for elem in blocks:
-            x_cord = Alphabet.index(elem[0])
-            y_cord = int(elem[1]) - 1
-            board[x_cord][y_cord] = '#'
+            col = Alphabet.index(elem[0])
+            row = int(elem[1])
+            board[row][col] = '#'
         return board
 
     def set_cur_depth(self,depth):
