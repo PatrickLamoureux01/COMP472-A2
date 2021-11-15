@@ -31,15 +31,22 @@ class Game:
 
         self.h = "e1"
 
-        self.current_state = self.generate_board()
+        self.current_state = self.generate_board(self.b)
 
         # Player X always plays first
         self.player_turn = 'X'
 
-    def generate_board(self):
+    def generate_board(self,blocks):
         # Generate board based off n
-
-        return  [['.' for i in range(self.n)] for i in range(self.n)]
+        board = []
+        board = [['.' for i in range(self.n)] for i in range(self.n)]
+        #print(blocks)
+        for elem in blocks:
+            #print(elem[0])
+            #print(elem[1])
+            board[[elem[0]][elem[1]]] = '#'
+        print(board)
+        #return [['.' for i in range(self.n)] for i in range(self.n)]
 
     def set_cur_depth(self,depth):
         self.depth = depth
@@ -425,8 +432,8 @@ def some_setup():
     d2 = int(input('Enter the the depth for player 2 (d2): '))
 
     s = int(input('Enter the winning line-up size: '))
-    a = int(input('Enter:  minimax (FALSE) or alphabeta (TRUE)'))
-    type = int(input('Enter: 1 for H-H, 2 for H-AI, 3 for AI-H, 4 for AI-AI'))
+    a = int(input('Enter:  minimax (0) or alphabeta (1): '))
+    type = int(input('Enter 1 for H-H, 2 for H-AI, 3 for AI-H, 4 for AI-AI: '))
 
     data.append(n)
     data.append(blocks)
@@ -443,7 +450,7 @@ def main():
     data = some_setup()
     g.initialize_game(data[0], data[1], data[2], data[3], data[4])
 
-    if data[5]:
+    if data[5] == 1:
         if data[6] == 1:
             g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
         elif data[6] == 2:
