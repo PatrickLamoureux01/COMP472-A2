@@ -519,6 +519,15 @@ def some_setup():
     data.append(type)
     return data
 
+def game_trace_files(n,b,s,t,blocks):
+    f = open("gameTrace-{}{}{}{}.txt".format(n,b,s,t), "w")
+    f.write("n={} b={} s={} t={}+\n".format(n,b,s,t))
+    f.write("blocks=[")
+    for elem in blocks:
+        f.write("{},".format(elem))
+    f.write("]+\n")
+
+
 def main():
 
     g = Game(recommend=True)
