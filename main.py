@@ -7,7 +7,7 @@
 import time
 import sys
 
-file = "C:\\Users\\Pub\\Desktop\\Game_Output\\output.txt"
+file = "C:\\Users\\ConnorK\\Desktop\\Game_Output\\output.txt"
 
 
 # https://stackoverflow.com/questions/14906764/how-to-redirect-stdout-to-both-file-and-console-with-scripting
@@ -40,8 +40,10 @@ class Game:
     def __init__(self, recommend=True):
      #   self.initialize_game()
          self.recommend = recommend
+         self.X_wins = 0
+         self.Y_wins = 0
 
-    def initialize_game(self,n,b,s,d1,d2):
+    def initialize_game(self,n,b,s,d1,d2,t):
         #should this be elsewhere? Should we send it?
         self.recommend = True
         self.n = n
@@ -54,6 +56,8 @@ class Game:
 
         self.h_evaluations = 0
         self.h = "e2"
+        self.t = t
+        self.some_time = 0
 
         self.current_state = self.generate_board(self.b)
 
@@ -356,7 +360,10 @@ class Game:
                 val += 10
             elif oCount == 1:
                 val -= 10
-            return val,1,1
+            if self.player_turn == 'X':
+                return -val, 1, 1  # Note the negative sign
+            if self.player_turn == 'O':
+                return val, 1, 1
 
 
         print("Very concerning")
@@ -404,6 +411,10 @@ class Game:
         return (value, x, y)
 
     def alphabeta(self, alpha=-2, beta=2,depth=2, max=False):
+
+        if round(time.time() - self.some_time, 7) > self.t:
+            return self.heuristic()
+
         #print(depth)
         # Minimizing for 'X' and maximizing for 'O'
         # Possible values are:
@@ -433,6 +444,7 @@ class Game:
                         if max:
                             self.current_state[i][j] = 'O'
                             (v, _, _) = self.alphabeta(alpha, beta,depth, max=False)
+                            print("Here O: "+str(v)+" "+str(value))
                             if v > value:
                                 value = v
                                 x = i
@@ -440,6 +452,7 @@ class Game:
                         else:
                             self.current_state[i][j] = 'X'
                             (v, _, _) = self.alphabeta(alpha, beta,depth, max=True)
+                            print("Here X: " + str(v) + " " + str(value))
                             if v < value:
                                 value = v
                                 x = i
@@ -456,14 +469,9 @@ class Game:
                             if value < beta:
                                 beta = value
         else:
-            #print("Getting Heuristic of: ")
-            #self.draw_board()
             return self.heuristic()
 
-        #print(value)
-        #print(x)
-        #print(y)
-        #self.depth = self.depth + 1
+        #print("Found: "+str(y)+" "+str(x))
         return (value, x, y)
 
     # Temporary Edited version of play with limited functionality
@@ -479,7 +487,7 @@ class Game:
             if self.check_end():
                 return
             start = time.time()
-
+            self.some_time = start
             self.h_evaluations = 0
 
             if algo == self.MINIMAX:
@@ -561,36 +569,42 @@ def game_trace_files(n,b,s,t,blocks):
 def main():
 
     g = Game(recommend=True)
-    data = some_setup()
-    g.initialize_game(data[0], data[1], data[2], data[3], data[4])
+    while True:
+        data = some_setup()
+        g.initialize_game(data[0], data[1], data[2], data[3], data[4], data[5])
 
-    #Print output to file and to stdout
-    sys.stdout = Logger()
-    print("n: "+str(data[0]))
-    print("b: "+str(data[1]))
-    print("s: "+str(data[2]))
-    print("d1: "+str(data[3]))
-    print("d2: "+str(data[4]))
+        # Print output to file and to stdout
+        # sys.stdout = Logger()
+        print("n: " + str(data[0]))
+        print("b: " + str(data[1]))
+        print("s: " + str(data[2]))
+        print("d1: " + str(data[3]))
+        print("d2: " + str(data[4]))
 
-
-    if data[6] == 1:
-        if data[7] == 1:
-            g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
-        elif data[7] == 2:
-            g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.AI)
-        elif data[7] == 3:
-            g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
+        if data[6] == 1:
+            if data[7] == 1:
+                g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.HUMAN)
+            elif data[7] == 2:
+                g.play(algo=Game.ALPHABETA, player_x=Game.HUMAN, player_o=Game.AI)
+            elif data[7] == 3:
+                g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.HUMAN)
+            else:
+                g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
         else:
-            g.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI)
-    else:
-        if data[7] == 1:
-            g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
-        elif data[7] == 2:
-            g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.AI)
-        elif data[7] == 3:
-            g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
-        else:
-            g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
+            if data[7] == 1:
+                g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN)
+            elif data[7] == 2:
+                g.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.AI)
+            elif data[7] == 3:
+                g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
+            else:
+                g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
+
+        # sys.stdout = sys.stdout
+        p = input('Play again? (Y/N): ')
+        if (p != 'Y'):
+            break
+
 
 
 if __name__ == "__main__":
