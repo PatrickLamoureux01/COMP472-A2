@@ -1,0 +1,269 @@
+n: 5
+b: [['B', '1'], ['A', '1'], ['C', '1'], ['A', '3']]
+s: 4
+d1: 6
+d2: 6
+s: 4
+    A    B    C    D    E  
+0 ['.', '.', '.', '.', '.']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', '.', '.', '.', '.']
+
+Player X under AI control plays: A0
+
+i Evaluation time: 0.2024591s
+ii Heuristic evaluations: 6752
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', '.', '.', '.']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', '.', '.', '.', '.']
+
+Player O under AI control plays: E0
+
+i Evaluation time: 0.2034559s
+ii Heuristic evaluations: 6272
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', '.', '.', 'O']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', '.', '.', '.', '.']
+
+Player X under AI control plays: C0
+
+i Evaluation time: 0.0917549s
+ii Heuristic evaluations: 11265
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', '.', 'O']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', '.', '.', '.', '.']
+
+Player O under AI control plays: D0
+
+i Evaluation time: 0.096741s
+ii Heuristic evaluations: 12513
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', '.', '.', '.', '.']
+
+Player X under AI control plays: B4
+
+i Evaluation time: 0.3495731s
+ii Heuristic evaluations: 71876
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', '.', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', 'X', '.', '.', '.']
+
+Player O under AI control plays: D1
+
+i Evaluation time: 0.036901s
+ii Heuristic evaluations: 7153
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', '.', '.']
+4 ['.', 'X', '.', '.', '.']
+
+Player X under AI control plays: D3
+
+i Evaluation time: 0.1860099s
+ii Heuristic evaluations: 33659
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', '.', '.', 'X', '.']
+4 ['.', 'X', '.', '.', '.']
+
+Player O under AI control plays: B3
+
+i Evaluation time: 0.180517s
+ii Heuristic evaluations: 32442
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', '.']
+2 ['.', '.', '.', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', '.', '.']
+
+Player X under AI control plays: C2
+
+i Evaluation time: 0.0448799s
+ii Heuristic evaluations: 6617
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', '.']
+2 ['.', '.', 'X', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', '.', '.']
+
+Player O under AI control plays: D4
+
+i Evaluation time: 0.112699s
+ii Heuristic evaluations: 18030
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', '.']
+2 ['.', '.', 'X', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player X under AI control plays: E1
+
+i Evaluation time: 0.0538568s
+ii Heuristic evaluations: 6995
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['.', '.', 'X', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player O under AI control plays: A2
+
+i Evaluation time: 0.0079782s
+ii Heuristic evaluations: 780
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', '.', 'X', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player X under AI control plays: B2
+
+i Evaluation time: 0.0069818s
+ii Heuristic evaluations: 475
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', 'X', 'X', '.', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player O under AI control plays: D2
+
+i Evaluation time: 0.003989s
+ii Heuristic evaluations: 220
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', 'X', 'X', 'O', '.']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player X under AI control plays: E2
+
+i Evaluation time: 0.0059841s
+ii Heuristic evaluations: 157
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', 'X', 'X', 'O', 'X']
+3 ['*', 'O', '.', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player O under AI control plays: C3
+
+i Evaluation time: 0.002991s
+ii Heuristic evaluations: 0
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', '.', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', 'X', 'X', 'O', 'X']
+3 ['*', 'O', 'O', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+Player X under AI control plays: B0
+
+i Evaluation time: 0.000998s
+ii Heuristic evaluations: 0
+iii Evaluations by depth: 
+[0, 0, 0, 0, 0, 0]
+iv Average evaluation depth: 
+v Average recursion depth:
+    A    B    C    D    E  
+0 ['X', 'X', 'X', 'O', 'O']
+1 ['*', '*', '*', 'O', 'X']
+2 ['O', 'X', 'X', 'O', 'X']
+3 ['*', 'O', 'O', 'X', '.']
+4 ['.', 'X', '.', 'O', '.']
+
+The winner is O!

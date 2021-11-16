@@ -7,8 +7,8 @@
 import time
 import sys
 
-file = "C:\\Users\\ConnorK\\Desktop\\Game_Output\\output.txt"
-
+#file = "C:\\Users\\Pub\\Desktop\\Game_Output\\output.txt"
+file = "C:\\Users\\Pub\\Desktop\\Game_Output\\"
 
 # https://stackoverflow.com/questions/14906764/how-to-redirect-stdout-to-both-file-and-console-with-scripting
 class Logger(object):
@@ -40,22 +40,32 @@ class Game:
     def __init__(self, recommend=True):
      #   self.initialize_game()
          self.recommend = recommend
+
+         #Data from multiple games
          self.X_wins = 0
          self.Y_wins = 0
 
-    def initialize_game(self,n,b,s,d1,d2,t):
+    def initialize_game(self,n,b,s,d1,d2,t,x_heu,o_heu):
         #should this be elsewhere? Should we send it?
         self.recommend = True
         self.n = n
         self.b = b
         self.s = s
 
+        self.Xdepth_eval = [0] * d1
+        self.Odepth_eval = [0] * d1
+
         self.d1 = d1
         self.d2 = d2
         self.depth = d1
 
         self.h_evaluations = 0
-        self.h = "e2"
+        self.x_heu = x_heu.lower()
+        self.o_heu = o_heu.lower()
+        self.cur_h = None
+
+
+
         self.t = t
         self.some_time = 0
 
@@ -251,18 +261,15 @@ class Game:
             self.player_turn = 'X'
         return self.player_turn
 
-    def heuristic(self):
+    def heuristic(self,depth):
         # Note: B = X and W = 0
         x = 0
         y = 0
-        #return 1,x,y
-        b_count = 0
-        w_count = 0
         b_score = 0
         w_score = 0
         self.h_evaluations += 1
 
-        if self.h == "e1":
+        if self.cur_h == "e1":
             # Vertical win : this is E1
             for col in range(0, self.n):
                 for row in range(0, self.n):
@@ -369,18 +376,18 @@ class Game:
         print("Very concerning")
         return 1,0,0
 
-
-
-    def minimax(self, max=False):
+    def minimax(self, depth=2, max=False):
+        if round(time.time() - self.some_time, 7) > self.t:
+            return self.heuristic(depth)
         # Minimizing for 'X' and maximizing for 'O'
         # Possible values are:
         # -1 - win for 'X'
         # 0  - a tie
         # 1  - loss for 'X'
-        # We're initially setting it to 2 or -2 as worse than the worst case:
-        value = 2
+        # We're initially setting it to 100000000 or -100000000 as worse than the worst case:
+        value = 100000000
         if max:
-            value = -2
+            value = -100000000
         x = None
         y = None
         result = self.is_end()
@@ -390,41 +397,47 @@ class Game:
             return (1, x, y)
         elif result == '.':
             return (0, x, y)
-        for i in range(0, self.n):
-            for j in range(0, self.n):
-                if self.current_state[i][j] == '.':
-                    if max:
-                        self.current_state[i][j] = 'O'
-                        (v, _, _) = self.minimax(max=False)
-                        if v > value:
-                            value = v
-                            x = i
-                            y = j
-                    else:
-                        self.current_state[i][j] = 'X'
-                        (v, _, _) = self.minimax(max=True)
-                        if v < value:
-                            value = v
-                            x = i
-                            y = j
-                    self.current_state[i][j] = '.'
+
+        if depth > 0:
+            depth = depth - 1
+            for i in range(0, self.n):
+                for j in range(0, self.n):
+                    if self.current_state[i][j] == '.':
+                        if max:
+                            self.current_state[i][j] = 'O'
+                            (v, _, _) = self.minimax(depth,max=False)
+                            if v > value:
+                                value = v
+                                x = i
+                                y = j
+                        else:
+                            self.current_state[i][j] = 'X'
+                            (v, _, _) = self.minimax(depth,max=True)
+                            if v < value:
+                                value = v
+                                x = i
+                                y = j
+                        self.current_state[i][j] = '.'
+        else:
+            return self.heuristic(depth)
+
+
         return (value, x, y)
 
     def alphabeta(self, alpha=-2, beta=2,depth=2, max=False):
 
         if round(time.time() - self.some_time, 7) > self.t:
-            return self.heuristic()
+            return self.heuristic(depth)
 
-        #print(depth)
         # Minimizing for 'X' and maximizing for 'O'
         # Possible values are:
         # -1 - win for 'X'
         # 0  - a tie
         # 1  - loss for 'X'
-        # We're initially setting it to 2 or -2 as worse than the worst case:
-        value = 2
+        # We're initially setting it to 100000000 or -100000000 as worse than the worst case:
+        value = 100000000
         if max:
-            value = -2
+            value = -100000000
         x = None
         y = None
         result = self.is_end()
@@ -444,7 +457,6 @@ class Game:
                         if max:
                             self.current_state[i][j] = 'O'
                             (v, _, _) = self.alphabeta(alpha, beta,depth, max=False)
-                            print("Here O: "+str(v)+" "+str(value))
                             if v > value:
                                 value = v
                                 x = i
@@ -452,7 +464,6 @@ class Game:
                         else:
                             self.current_state[i][j] = 'X'
                             (v, _, _) = self.alphabeta(alpha, beta,depth, max=True)
-                            print("Here X: " + str(v) + " " + str(value))
                             if v < value:
                                 value = v
                                 x = i
@@ -469,12 +480,10 @@ class Game:
                             if value < beta:
                                 beta = value
         else:
-            return self.heuristic()
+            return self.heuristic(depth)
 
-        #print("Found: "+str(y)+" "+str(x))
         return (value, x, y)
 
-    # Temporary Edited version of play with limited functionality
     def play(self, algo=None, player_x=None, player_o=None):
         if algo == None:
             algo = self.ALPHABETA
@@ -492,15 +501,17 @@ class Game:
 
             if algo == self.MINIMAX:
                 if self.player_turn == 'X':
-                    (_, x, y) = self.minimax(max=False)
+                    self.cur_h = self.x_heu
+                    (_, x, y) = self.minimax(self.d1, max=False)
                 else:
-                    (_, x, y) = self.minimax(max=True)
+                    self.cur_h = self.o_heu
+                    (_, x, y) = self.minimax(self.d2, max=True)
             else:  # algo == self.ALPHABETA
                 if self.player_turn == 'X':
-                    #self.depth = self.d1
+                    self.cur_h = self.x_heu
                     (m, x, y) = self.alphabeta(-2,2,self.d1,max=False)
                 else:
-                    #self.depth = self.d2
+                    self.cur_h = self.o_heu
                     (m, x, y) = self.alphabeta(-2,2,self.d2,max=True)
 
             end = time.time()
@@ -509,13 +520,38 @@ class Game:
                     self.player_turn == 'O' and player_o == self.HUMAN):
                 print(F'i Evaluation time: {round(end - start, 7)}s')
                 print(F'ii Heuristic evaluations: '+str(self.h_evaluations))
+                print(F'iii Evaluations by depth: ')
+                print(F'iv Average evaluation depth: ')
+                print(F'v Average recursion depth:')
                 print(F'Recommended move: '+ self.transform_move(x,y))
                 (x, y) = self.input_move()
 
             if (self.player_turn == 'X' and player_x == self.AI) or (self.player_turn == 'O' and player_o == self.AI):
+                print(F'Player {self.player_turn} under AI control plays: ' + self.transform_move(x, y))
+                print("")
                 print(F'i Evaluation time: {round(end - start, 7)}s')
                 print(F'ii Heuristic evaluations: ' + str(self.h_evaluations))
-                print(F'Player {self.player_turn} under AI control plays: ' + self.transform_move(x,y))
+                print(F'iii Evaluations by depth: ')
+                if self.player_turn == 'X':
+                    print(self.Xdepth_eval)
+                else:
+                    print(self.Odepth_eval)
+                print(F'iv Average evaluation depth: ')
+                print(F'v Average recursion depth:')
+
+            # If the AI played illegal move end the game
+            if player_x == self.AI or player_y == self.AI:
+                if self.current_state[x][y] == 'X' or self.current_state[x][y] == 'O':
+                    if self.player_turn == 'X':
+                        self.result = 'O'
+                    elif self.player_turn == 'O':
+                        self.result = 'X'
+                    if self.check_end():
+                        return
+
+            #reset
+            self.Xdepth_eval = [0]*self.d1
+            self.Ydepth_eval = [0]*self.d2
 
             self.current_state[x][y] = self.player_turn
             self.switch_player()
@@ -537,12 +573,17 @@ def some_setup():
     s = int(input('Enter the winning line-up size: '))
 
     # Player X
-    d1 = int(input('Enter the the depth for player 1 (d1): '))
+    d1 = int(input('Enter the depth for player 1 (d1): '))
 
     # Player Y
-    d2 = int(input('Enter the the depth for player 2 (d2): '))
+    d2 = int(input('Enter the depth for player 2 (d2): '))
 
-    t = int(input('Enter the the max amount of time to make a move: '))
+    #Player X
+    x_heu = input('Enter the heuristic for player 1 (e1 or e2): ')
+    #Player Y
+    o_heu = input('Enter the heuristic for player 2 (e1 or e2): ')
+
+    t = int(input('Enter the max amount of time to make a move: '))
 
     a = int(input('Enter:  minimax (0) or alphabeta (1): '))
     type = int(input('Enter 1 for H-H, 2 for H-AI, 3 for AI-H, 4 for AI-AI: '))
@@ -555,6 +596,9 @@ def some_setup():
     data.append(t)
     data.append(a)
     data.append(type)
+    data.append(x_heu)
+    data.append(o_heu)
+    data.append(d)
     return data
 
 def game_trace_files(n,b,s,t,blocks):
@@ -565,21 +609,26 @@ def game_trace_files(n,b,s,t,blocks):
         f.write("{},".format(elem))
     f.write("]+\n")
 
+def scoreboard():
+    print("")
 
 def main():
-
+    global file
     g = Game(recommend=True)
     while True:
         data = some_setup()
-        g.initialize_game(data[0], data[1], data[2], data[3], data[4], data[5])
+        g.initialize_game(data[0], data[1], data[2], data[3], data[4], data[5], data[8], data[9])
 
+        file = (file+"gameTrace"+str(data[0])+str(data[10])+str(data[2])+str(data[5])+".txt")
+        print(file)
         # Print output to file and to stdout
-        # sys.stdout = Logger()
+        sys.stdout = Logger()
         print("n: " + str(data[0]))
         print("b: " + str(data[1]))
         print("s: " + str(data[2]))
         print("d1: " + str(data[3]))
         print("d2: " + str(data[4]))
+        print("s: " + str(data[2]))
 
         if data[6] == 1:
             if data[7] == 1:
@@ -600,7 +649,7 @@ def main():
             else:
                 g.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI)
 
-        # sys.stdout = sys.stdout
+        sys.stdout = sys.__stdout__
         p = input('Play again? (Y/N): ')
         if (p != 'Y'):
             break

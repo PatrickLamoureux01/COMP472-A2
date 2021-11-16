@@ -1,0 +1,1 @@
+Index out of range for blocks (0,4)(4,0)(4,4) with board size n=4
